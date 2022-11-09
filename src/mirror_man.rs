@@ -1,4 +1,4 @@
-const MIRRORS_STATUS_URL: &str = "https://archlinux.org/mirrors/status/json/";
+pub const MIRRORS_STATUS_URL: &str = "https://archlinux.org/mirrors/status/json/";
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Debug, Deserialize)]

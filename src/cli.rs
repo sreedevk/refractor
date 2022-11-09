@@ -15,12 +15,12 @@ pub struct App {
     /// https/http
     #[arg(short, long)]
     protocol: Option<String>,
-    /// connection timeout
-    #[arg(long)]
-    connection_timeout: Option<u32>,
-    /// download timeout
-    #[arg(short, long)]
-    download_timeout: Option<u32>,
+    /// Time in seconds to wait before connection times out
+    #[arg(long, default_value_t = 5)]
+    connection_timeout: u32,
+    /// Time in seconds to wait before connection times out, Defaults to 5
+    #[arg(long, default_value_t = 5)]
+    download_timeout: u32,
     /// number of cpu threads to use
     #[arg(short, long)]
     theads: Option<u32>,
@@ -47,7 +47,26 @@ pub struct App {
     #[arg(long)]
     completion_percent: Option<u32>,
     #[arg(long)]
-    list_countries: bool
+    list_countries: bool,
+    /// Time in seconds for which the mirrors cache fetched from url will be valid for
+    #[arg(long)]
+    cache_timeout: Option<u32>,
+    /// url to fetch mirrors list from
+    #[arg(long, default_value_t = String::from("https://archlinux.org/mirrors/status/json/"))]
+    url: String,
+    #[arg(long, default_value_t = false)]
+    verbose: bool,
+    #[arg(long)]
+    info: bool,
+    /// only return mirrors that support isos
+    #[arg(long)]
+    isos: bool,
+    /// only return mirrors that support ipv4
+    #[arg(long)]
+    ipv4: bool,
+    /// only return mirrors that support ipv6
+    #[arg(long)]
+    ipv6: bool
 }
 
 impl App {
@@ -55,12 +74,3 @@ impl App {
         let args = App::parse();
     }
 }
-
-// --list-countries
-// --cache-timeout
-// --url                /* arch package list data url */
-// --verbose
-// --info               /* print info */
-//   --isos                Only return mirrors that host ISOs.
-//   --ipv4                Only return mirrors that support IPv4.
-//   --ipv6                Only return mirrors that support IPv6.
