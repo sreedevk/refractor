@@ -72,5 +72,8 @@ pub struct App {
 impl App {
     pub fn start() {
         let args = App::parse();
+        if args.list_countries {
+            
+        }
     }
 }

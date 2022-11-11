@@ -1,12 +1,14 @@
 #![allow(dead_code)]
 
 mod cli;
-mod mirror_man;
+mod mirrors;
+
+use mirrors::MirrorMeta;
+use anyhow::Result;
 
 #[tokio::main]
-async fn main() -> Result<(), reqwest::Error> {
-    // let mirror_list = mirror_man::fetch_mirrors().await?;
-    // dbg!(mirror_list);
-    let app = cli::App::start();
+async fn main() -> Result<()> {
+    let _app = cli::App::start();
+    let mirror_list = MirrorMeta::fetch().await?;
     Ok(())
 }
