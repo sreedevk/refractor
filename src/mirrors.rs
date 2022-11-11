@@ -1,10 +1,9 @@
-use chrono::{DateTime, Utc, Duration};
 use serde::{Deserialize, Serialize};
-use std::{fs, env, path::PathBuf};
+use std::collections::HashMap;
 use anyhow::Result;
-
-pub const MIRRORS_STATUS_URL: &str = "https://archlinux.org/mirrors/status/json/";
-pub const LOG_TARGET: &str = "refector_mirror_man";
+use chrono::{Utc, DateTime};
+use crate::cache::Cache;
+use crate::remote::Client;
 
 #[derive(Serialize, Debug, Deserialize)]
 pub struct Mirror {
@@ -37,75 +36,15 @@ pub struct MirrorMeta {
 
 impl MirrorMeta {
     pub async fn fetch() -> Result<MirrorMeta> {
-        match Self::fetch_cache().await {
-            Ok(cache) => { Ok(cache) },
-            Err(_e) => Self::fetch_remote().await
+        match Cache::read().await {
+            Ok(cache) => Ok(cache),
+            Err(_e) => Client::fetch().await
         }
     }
     
-    async fn fetch_remote() -> Result<MirrorMeta> {
-        let mut meta = reqwest::get(MIRRORS_STATUS_URL)
-            .await?
-            .json::<MirrorMeta>()
-            .await?;
-
-        meta.cache_time = Some(Utc::now());
-
-        Self::write_cache(&meta).await;
-        Ok(meta)
+    pub fn country_wise() -> String {
+        let _table: HashMap<Vec<String>, usize> = HashMap::new();
+        String::from("this\tis\ta\ttable")
     }
 
-    async fn fetch_cache() -> Result<MirrorMeta> {
-        let raw_cache = fs::read_to_string(Self::cache_path())?;
-        let parsed_cache: MirrorMeta = serde_json::from_str(&raw_cache.as_str())?;
-        
-        if Self::is_cache_valid(&parsed_cache.cache_time) {
-            println!("{}: cache hit!", LOG_TARGET);
-            Ok(parsed_cache)
-        }
-        else {
-            println!("{}: cache miss!", LOG_TARGET);
-            Self::fetch_remote().await
-        }
-    }
-
-    fn is_cache_valid(cache_time: &Option<DateTime<Utc>>) -> bool {
-        if cache_time.is_none() {
-            return false
-        }
-        else {
-            (Utc::now() - cache_time.unwrap()) <= Duration::seconds(3600)
-        }
-    }
-
-    fn home_dir() -> PathBuf {
-        match dirs::home_dir() {
-            Some(dir) => dir,
-            None => {
-                match env::var("HOME") {
-                    Ok(home) => PathBuf::from(home),
-                    Err(_e) => PathBuf::from(r"/home/").join(env::var("USER").unwrap())
-                }
-            }
-        }
-    }
-
-    fn cache_path() -> PathBuf {
-        let base_path = match env::var("XDG_CACHE_HOME") {
-            Ok(cache_home) => PathBuf::from(cache_home),
-            Err(_) => Self::home_dir().join(".cache")
-        };
-
-        dbg!(base_path.join("mirrorlist.json"));
-        base_path.join("mirrorlist.json")
-    }
-
-    async fn write_cache(mirror_meta: &MirrorMeta) {
-        if let Ok(serialized_cache) = serde_json::to_string(mirror_meta) {
-            match fs::write(Self::cache_path(), serialized_cache) {
-                Ok(_) => println!("{}: cache written successfully!", LOG_TARGET),
-                Err(e) => eprintln!("{}: cache write failed! {}", LOG_TARGET, e)
-            }
-        }
-    }
 }

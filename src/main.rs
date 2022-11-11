@@ -2,13 +2,16 @@
 
 mod cli;
 mod mirrors;
+mod cache;
+mod remote;
 
 use mirrors::MirrorMeta;
 use anyhow::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let _app = cli::App::start();
-    let mirror_list = MirrorMeta::fetch().await?;
+    env_logger::init();
+    cli::App::start();
+    let _mirror_list = MirrorMeta::fetch().await?;
     Ok(())
 }

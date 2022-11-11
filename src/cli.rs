@@ -1,4 +1,7 @@
 use clap::Parser;
+use crate::mirrors::MirrorMeta;
+use std::io::Write;
+use tabwriter::TabWriter;
 
 #[derive(Debug, Parser)]
 #[clap(author,version,about)]
@@ -73,7 +76,13 @@ impl App {
     pub fn start() {
         let args = App::parse();
         if args.list_countries {
-            
+            Self::list_countries()
         }
+    }
+
+    fn list_countries() {
+        let mut tw = TabWriter::new(std::io::stdout()).padding(1);
+        tw.write_all(MirrorMeta::country_wise().as_bytes()).unwrap();
+        tw.flush().unwrap();
     }
 }
