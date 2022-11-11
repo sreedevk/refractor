@@ -1,0 +1,2 @@
+# refractor
+pacman mirrorlist manager
