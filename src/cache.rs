@@ -64,12 +64,8 @@ impl Cache {
     }
 
     pub fn is_cache_valid(cache_time: &Option<DateTime<Utc>>) -> bool {
-        if cache_time.is_none() {
-            false
-        }
-        else {
+        !cache_time.is_none() && 
             (Utc::now() - cache_time.unwrap()) <= Duration::seconds(3600)
-        }
     }
 }
 
