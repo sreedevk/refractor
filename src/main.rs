@@ -5,6 +5,8 @@ mod mirrors;
 mod cache;
 mod remote;
 mod app;
+mod benchmark;
+mod mirror;
 
 use mirrors::MirrorMeta;
 use anyhow::Result;
