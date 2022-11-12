@@ -1,5 +1,5 @@
 use crate::cli::RefractorArgs;
-use crate::mirrors::MirrorMeta;
+use crate::mirrors::{MirrorMeta, SortCondition};
 use clap::Parser;
 use std::io::Write;
 use tabwriter::TabWriter;
@@ -9,12 +9,15 @@ pub struct App<'a> {
 }
 
 impl<'a> App<'a> {
-    pub fn start(mirror_meta: &MirrorMeta) {
+    pub async fn start(mirror_meta: &MirrorMeta) {
         let app = App { mirror_meta };
         let args = RefractorArgs::parse();
 
         if args.list_countries {
             app.list_countries();
+        }
+        else if args.fastest.is_some() {
+            app.sort_mirrors().await;
         }
     }
 
@@ -23,5 +26,9 @@ impl<'a> App<'a> {
         tw.write_all(self.mirror_meta.country_wise_count().as_bytes())
             .unwrap();
         tw.flush().unwrap();
+    }
+
+    async fn sort_mirrors(&self) {
+        self.mirror_meta.sort(SortCondition::Score).await;
     }
 }

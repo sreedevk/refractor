@@ -6,6 +6,9 @@ pub struct RefractorArgs {
     /// Limit the mirror list to the n most recently synced mirrors
     #[arg(short, long)]
     pub latest: Option<u32>,
+    /// only returns the fastest n mirrors
+    #[arg(short, long)]
+    pub fastest: Option<u32>,
     /// Save the output file to path
     #[arg(short, long)]
     pub save: Option<String>,

@@ -1,4 +1,4 @@
-#![allow(dead_code)]
+#![allow(dead_code, unused_imports)]
 
 mod app;
 mod benchmark;
@@ -17,6 +17,6 @@ async fn main() -> Result<()> {
     env_logger::init();
 
     let mirror_list = MirrorMeta::fetch().await?;
-    App::start(&mirror_list);
+    App::start(&mirror_list).await;
     Ok(())
 }
