@@ -1,6 +1,8 @@
 use chrono::Duration;
 use serde::{Deserialize, Serialize};
 use crate::benchmark::Benchmark;
+use crate::remote::Client;
+use anyhow::Result;
 
 #[derive(Serialize, Debug, Deserialize)]
 pub struct Mirror {
@@ -22,4 +24,8 @@ pub struct Mirror {
 }
 
 impl Mirror {
+    pub async fn download(&self) -> Result<()> {
+        let client = Client::new()?;
+        client.fetch_db(&self).await
+    }
 }

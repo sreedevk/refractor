@@ -6,6 +6,8 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
+type CountryMirrorTable = HashMap<Vec<String>, usize>;
+
 #[derive(Serialize, Debug, Deserialize)]
 pub struct MirrorMeta {
     pub cache_time: Option<DateTime<Utc>>,
@@ -26,28 +28,27 @@ impl MirrorMeta {
     }
 
     pub fn country_wise_count(&self) -> String {
-        let mut table: HashMap<Vec<String>, usize> = HashMap::new();
-        let mut buffer = String::from("country\tcode\tcount\n");
+        self
+            .urls
+            .iter()
+            .map(|mirror| vec![mirror.country.clone(), mirror.country_code.clone()] )
+            .fold(
+                CountryMirrorTable::new(),
+                |mut tbl, key| {
+                    tbl
+                        .entry(key)
+                        .and_modify(|count| *count += 1)
+                        .or_insert(0);
 
-        for mirror in self.urls.iter() {
-            let country = mirror.country.clone();
-            let country_code = mirror.country_code.clone();
-
-            if country.is_empty() {
-                continue;
-            };
-
-            let key = vec![country, country_code];
-            table
-                .entry(key)
-                .and_modify(|count| *count += 1)
-                .or_insert(0);
-        }
-
-        for (country_info, count) in table.iter() {
-            buffer.push_str(format!("{}\t{}\n", country_info.join("\t"), count).as_str())
-        }
-
-        buffer
+                    tbl
+                }
+            )
+            .iter()
+            .fold(
+                String::from("country\tcode\tcount\n"),
+                |buff, (country_info, count)| {
+                    format!("{}{}\t{}\n", buff, country_info.join("\t"), count)
+                }
+            )
     }
 }
