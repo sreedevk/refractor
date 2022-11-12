@@ -1,4 +1,3 @@
-use crate::benchmark::Benchmark;
 use crate::remote::Client;
 use anyhow::Result;
 use chrono::{Duration, Utc};
@@ -46,9 +45,9 @@ impl Mirror {
 
         match data {
             Ok(resp) => {
-                let download_time = (end_time - start_time).num_milliseconds() as f64;
-                let download_size = resp.len() as f64;
-                let download_rate =  download_size / (download_time / 1000.0);
+                let download_time = ((end_time - start_time).num_milliseconds() as f64) / 1_000.0;
+                let download_size = (resp.len() as f64) / 1_000_000.0;
+                let download_rate =  download_size / download_time;
 
                 MirrorInfo {
                     mirror,

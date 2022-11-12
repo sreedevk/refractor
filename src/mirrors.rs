@@ -60,8 +60,10 @@ impl MirrorMeta {
 
         for mirror in self.urls.iter() {
             let x = Mirror::process(mirror.clone()).await;
-            Self::write_download_info(&x);
-            mirror_info.push(x);
+            if x.success {
+                Self::write_download_info(&x);
+                mirror_info.push(x);
+            }
         }
 
         mirror_info
@@ -76,15 +78,12 @@ impl MirrorMeta {
 
     fn write_download_info(mi: &MirrorInfo) {
         let mut tw = TabWriter::new(std::io::stdout()).padding(1);
-        let out = format!("{}\t{}\t{}\n", mi.mirror.url, mi.time, mi.rate);
+        let out = format!("{}\t{} secs\t{:.2} MB/s\n", mi.mirror.url, mi.time, mi.rate);
         tw.write_all(out.as_bytes()).unwrap();
         tw.flush().unwrap();
     }
 
     pub async fn sort(&self, _by: SortCondition) {
-        // INFO: Server                                                               Rate       Time
-        // INFO: https://mirror.aarnet.edu.au/pub/archlinux/                 2521.02 KiB/s     2.92 s
-        // INFO: http://mir.archlinux.fr/                                    1830.28 KiB/s     4.02 s
         self.process().await;
     }
 }

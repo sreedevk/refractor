@@ -1,7 +1,6 @@
 #![allow(dead_code, unused_imports)]
 
 mod app;
-mod benchmark;
 mod cache;
 mod cli;
 mod mirror;
