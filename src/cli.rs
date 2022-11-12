@@ -1,7 +1,7 @@
 use clap::Parser;
 
 #[derive(Debug, Parser)]
-#[clap(author,version,about)]
+#[clap(author, version, about)]
 pub struct RefractorArgs {
     /// Limit the mirror list to the n most recently synced mirrors
     #[arg(short, long)]
@@ -66,5 +66,5 @@ pub struct RefractorArgs {
     pub ipv4: bool,
     /// only return mirrors that support ipv6
     #[arg(long)]
-    pub ipv6: bool
+    pub ipv6: bool,
 }

@@ -1,8 +1,8 @@
-use chrono::Duration;
-use serde::{Deserialize, Serialize};
 use crate::benchmark::Benchmark;
 use crate::remote::Client;
 use anyhow::Result;
+use chrono::Duration;
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Debug, Deserialize)]
 pub struct Mirror {

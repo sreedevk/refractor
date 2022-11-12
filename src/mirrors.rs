@@ -28,27 +28,19 @@ impl MirrorMeta {
     }
 
     pub fn country_wise_count(&self) -> String {
-        self
-            .urls
+        self.urls
             .iter()
-            .map(|mirror| vec![mirror.country.clone(), mirror.country_code.clone()] )
-            .fold(
-                CountryMirrorTable::new(),
-                |mut tbl, key| {
-                    tbl
-                        .entry(key)
-                        .and_modify(|count| *count += 1)
-                        .or_insert(0);
-
-                    tbl
-                }
-            )
+            .map(|mirror| vec![mirror.country.clone(), mirror.country_code.clone()])
+            .fold(CountryMirrorTable::new(), |mut tbl, key| {
+                tbl.entry(key).and_modify(|count| *count += 1).or_insert(0);
+                tbl
+            })
             .iter()
             .fold(
                 String::from("country\tcode\tcount\n"),
                 |buff, (country_info, count)| {
                     format!("{}{}\t{}\n", buff, country_info.join("\t"), count)
-                }
+                },
             )
     }
 }

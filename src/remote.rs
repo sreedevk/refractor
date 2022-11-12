@@ -36,14 +36,15 @@ impl Client {
     }
 
     pub async fn fetch_db(self, mirror: &Mirror) -> Result<()> {
-       let mut data = self
-        .http_client
-        .get(format!("{}/{}", mirror.url, DB_SUBPATH))
-        .send()
-        .await?
-        .bytes()
-        .await?;
+        let data = self
+            .http_client
+            .get(format!("{}/{}", mirror.url, DB_SUBPATH))
+            .send()
+            .await?
+            .bytes()
+            .await?;
 
+        dbg!(data);
         Ok(())
     }
 }
