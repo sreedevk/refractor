@@ -5,6 +5,8 @@ use anyhow::Result;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, thread};
+use std::io::Write;
+use tabwriter::TabWriter;
 
 type CountryMirrorTable = HashMap<Vec<String>, usize>;
 
@@ -52,16 +54,31 @@ impl MirrorMeta {
             )
     }
 
-    pub async fn process(&self) -> Vec<MirrorInfo> {
+    async fn process(&self) -> Vec<MirrorInfo> {
         let mut mirror_info: Vec<MirrorInfo> = Vec::with_capacity(self.urls.len());
+        Self::write_download_info_headers();
 
         for mirror in self.urls.iter() {
             let x = Mirror::process(mirror.clone()).await;
-            dbg!(&x);
+            Self::write_download_info(&x);
             mirror_info.push(x);
         }
 
         mirror_info
+    }
+
+    fn write_download_info_headers() {
+        let mut tw = TabWriter::new(std::io::stdout()).padding(1);
+        let out = "mirror\ttime\trate\n";
+        tw.write_all(out.as_bytes()).unwrap();
+        tw.flush().unwrap();
+    }
+
+    fn write_download_info(mi: &MirrorInfo) {
+        let mut tw = TabWriter::new(std::io::stdout()).padding(1);
+        let out = format!("{}\t{}\t{}\n", mi.mirror.url, mi.time, mi.rate);
+        tw.write_all(out.as_bytes()).unwrap();
+        tw.flush().unwrap();
     }
 
     pub async fn sort(&self, _by: SortCondition) {

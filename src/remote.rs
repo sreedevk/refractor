@@ -42,8 +42,6 @@ impl Client {
             .get(format!("{}{}", mirror.url, DB_SUBPATH))
             .timeout(Duration::from_secs(DEFAULT_DOWNLOAD_TIMEOUT));
 
-        dbg!(&req);
-
         let data = req.send()
             .await?
             .bytes()
