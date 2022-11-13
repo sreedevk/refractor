@@ -83,7 +83,12 @@ impl MirrorMeta {
         tw.flush().unwrap();
     }
 
-    pub async fn sort(&self, _by: SortCondition) {
-        self.process().await;
+    pub async fn sort(&self, by: SortCondition) {
+        let mirrors = self.process().await;
+        match by {
+            _ => ()
+            // Age => mirror.sort_by(|a, b| a.last_sync )
+
+        }
     }
 }

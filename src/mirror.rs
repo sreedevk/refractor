@@ -1,8 +1,8 @@
 use crate::remote::Client;
 use anyhow::Result;
-use chrono::{Duration, Utc};
-use serde::{Deserialize, Serialize};
 use bytes::Bytes;
+use chrono::{DateTime, Duration, Utc};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Debug, Deserialize, Clone)]
 pub struct Mirror {
@@ -29,7 +29,7 @@ pub struct MirrorInfo {
     pub time: f64,
     pub size: f64,
     pub mirror: Mirror,
-    pub success: bool
+    pub success: bool,
 }
 
 impl Mirror {
@@ -47,25 +47,23 @@ impl Mirror {
             Ok(resp) => {
                 let download_time = ((end_time - start_time).num_milliseconds() as f64) / 1_000.0;
                 let download_size = (resp.len() as f64) / 1_000_000.0;
-                let download_rate =  download_size / download_time;
+                let download_rate = download_size / download_time;
 
                 MirrorInfo {
                     mirror,
                     time: download_time,
                     rate: download_rate,
                     size: download_size,
-                    success: true
-                }
-            },
-            Err(_) => {
-                MirrorInfo {
-                    mirror,
-                    time: 0.0,
-                    rate: 0.0,
-                    size: 0.0,
-                    success: false
+                    success: true,
                 }
             }
+            Err(_) => MirrorInfo {
+                mirror,
+                time: 0.0,
+                rate: 0.0,
+                size: 0.0,
+                success: false,
+            },
         }
     }
 }
