@@ -25,3 +25,6 @@ The following features are currently available:
 ```
 
 # contributions
+Thank you for investing your time to contribute this project. This project is still in the development stage.
+Feel free to fork the repo & raise a PR against this repo. Be sure to raise an issue before you create a PR to 
+avoid development conflicts or duplication of efforts.
