@@ -2,6 +2,13 @@
 name = "refractor"
 version = "0.0.1-a.1"
 edition = "2021"
+authors = "Sreedev Kodichath <sreedevpadmakumar@gmail.com>"
+license = "MIT"
+description = "Arch Linux Pacman Mirrors Management Tool"
+homepage    = "https://github.com/sreedevk/refractor"
+categories  = ["os::linux-apis"]
+readme      = "README.md"
+keywords    = ["refractor", "arch-linux-mirror-management", "arch-pacman", "pacman-mirrors"]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
